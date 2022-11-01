@@ -5,7 +5,7 @@ export const createNewPost = async (req, res) => {
     const post = new PostModel({
       title: req.body.title,
       text: req.body.text,
-      author: req.body.author,
+      author: req.userId,
     })
     const newPost = await post.save()
     res.json(newPost)

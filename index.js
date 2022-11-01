@@ -3,6 +3,8 @@ import cors from 'cors'
 import mongoose from 'mongoose'
 import { createNewPost, getAllPosts, getOnePost, updateThePost, deleteThePost } from "./controllers/PostController.js"
 import { registerNewUser, login } from "./controllers/UserController.js"
+import checkAuth from "./utils/checkAuth.js"
+import checkRights from "./utils/checkRights.js"
 
 const PORT = 4444
 const app = express()
@@ -21,25 +23,21 @@ app.post("/auth/register", registerNewUser)
 //2. POST Login
 app.post("/auth/login", login)
 
-//3. GET check is authorized
-
-
 ///CRUD of Posts
 // 1. GET all posts
 app.get("/posts", getAllPosts)
 
 // 2. POST a new post// !!!!!!!!!!!!!!!!!ADD LOGIN
-app.post("/posts", createNewPost)
+app.post("/posts", checkAuth, createNewPost)
 
 // 3. GET the post by ID
 app.get("/posts/:id", getOnePost)
 
 // 4. PUT update the post by ID// !!!!!!!!!!!!!!!!!ADD LOGIN and check if Author or Admin
-app.put("/posts/:id", updateThePost)
+app.put("/posts/:id", checkAuth, checkRights, updateThePost)
 
 // 5. DELETE the post by ID/ !!!!!!!!!!!!!!!!!ADD LOGIN and check if Author or Admin
-app.delete("/posts/:id", deleteThePost)
-
+app.delete("/posts/:id", checkAuth, checkRights, deleteThePost)
 
 app.listen(PORT, (err) => {
   if (err) console.log(err)
