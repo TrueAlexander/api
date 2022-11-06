@@ -3,7 +3,7 @@ import dotenv from 'dotenv'
 import cors from 'cors'
 import mongoose from 'mongoose'
 import { createNewPost, getAllPosts, getOnePost, updateThePost, deleteThePost } from "./controllers/PostController.js"
-import { registerNewUser, login } from "./controllers/UserController.js"
+import { registerNewUser, login, emailVerify } from "./controllers/UserController.js"
 import checkAuth from "./utils/checkAuth.js"
 import checkRights from "./utils/checkRights.js"
 import { registerUserValidation, loginUserValidation, postValidation } from "./utils/validations.js" 
@@ -24,8 +24,13 @@ app.use(express.json())
 ///authorization:
 //1. POST Register a new user
 app.post("/auth/register", registerUserValidation, handleValidationErrors, registerNewUser)
-//2. POST Login
+
+//2. get verify the email of the user
+app.get("/auth/verify", emailVerify)
+
+//3. POST Login
 app.post("/auth/login", loginUserValidation, handleValidationErrors, login)
+
 
 ///CRUD of Posts
 // 1. GET all posts
