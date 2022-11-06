@@ -16,3 +16,13 @@ export const postValidation = [
   body('text', 'Add a text. Min length should be 15 symbols').isLength({min: 15}).isString(),
 ]
 
+export const emailValidation = [
+  body('email', 'Wrong email format').isEmail(),
+]
+
+export const passwordValidation = [
+  body('password1', 'Password min length should be 5 symbols').isLength({min: 5}),
+  body('password2', 'Password min length should be 5 symbols').isLength({min: 5}),
+  body('email', 'Wrong email format').isEmail(),
+]
+

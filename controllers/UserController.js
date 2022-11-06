@@ -74,11 +74,9 @@ export const emailVerify = async (req, res) => {
     const user = await UserModel.findOneAndUpdate(
       {email: req.query.email}, {emailVerified: true}, { new:true }
     )
-
     res.status(201).json({
       message: `Dear ${user.username}, your email ${req.query.email} was successfully verified! You are welcome to our blog!`
-    })
-   
+    })  
   } catch (err) {
     console.log(err)
     res.status(500).json({
@@ -137,8 +135,92 @@ export const login = async (req, res) => {
   }
 }
 
+export const accessRecovery = async (req, res) => {
+  try {
+    const user = await UserModel.findOne({
+      email: req.body.email
+    })
+    if (user) {
+      ///send an email with instructions
+      const mailOptions = {
+        from: ' "Access recovery" <eformaliza@gmail.com>',
+        to: req.body.email,
+        subject: 'eFormaliza blog. Access recovery',
+        html: `
+        <h4>${user.username}! To access recover to eFormaliza blog please click on the link below...</h4>
+        <a href="http://${req.headers.host}/auth/reset-password?email=${req.body.email}&user=${user._id.toString()}">Click to reset the password!</a>`
+      }
+      transporter.sendMail(mailOptions, function(error, info) {
+        if (error) {
+          console.log(error)
+        } else {
+          res.status(200).json({
+            message: `Dear ${user.username} to recover your access to eFormaliza blog please enter your email address!`
+          })
+        }
+      })
+      ////
+    } else res.status(404).json({
+      message: `The user with ${req.body.email} is not registered yet. Please create your profile on our platform!`
+    })
 
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({
+      message: "not accessed to server"
+    })
+  }
+}
 
+export const resetPassword = async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.query.user)
+    if (!user) {
+      res.status(404).json({
+        message: "The user not found"
+      })
+    } else {
+      res.status(200).json({
+        message: "Please digit the new password (Min length should be 5 symbols) and click Confirm new password."
+      })
+    }
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({
+      message: "not accessed to server"
+    })
+  }
+}
 
+export const confirmPassword = async (req, res) => {
+  try {
+    const pass1 = req.body.password1
+    const pass2 = req.body.password2
+    const email = req.body.email
 
- 
+    if (pass1 !== pass2) {
+      res.status(400).json({
+        message: "Entered passwords don't match. Try one more time."
+      })
+    } else {
+      //hash new password
+      const password = pass1
+      const salt = await bcrypt.genSalt(10)
+      const newHash = await bcrypt.hash(password, salt)
+      const user = await UserModel.findOneAndUpdate(
+        {email: email},
+        {password: newHash}, 
+        { new:true })
+
+      res.status(201).json({
+        message: `Dear ${user.username}, your password was changed successfully. Please log in!`
+      })
+    }
+
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({
+      message: "not accessed to server"
+    })
+  }
+}

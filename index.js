@@ -3,10 +3,10 @@ import dotenv from 'dotenv'
 import cors from 'cors'
 import mongoose from 'mongoose'
 import { createNewPost, getAllPosts, getOnePost, updateThePost, deleteThePost } from "./controllers/PostController.js"
-import { registerNewUser, login, emailVerify } from "./controllers/UserController.js"
+import { registerNewUser, login, emailVerify, accessRecovery, resetPassword, confirmPassword } from "./controllers/UserController.js"
 import checkAuth from "./utils/checkAuth.js"
 import checkRights from "./utils/checkRights.js"
-import { registerUserValidation, loginUserValidation, postValidation } from "./utils/validations.js" 
+import { registerUserValidation, loginUserValidation, postValidation, emailValidation, passwordValidation } from "./utils/validations.js" 
 import handleValidationErrors from "./utils/handleValidationErrors.js"
 dotenv.config()
 
@@ -25,12 +25,22 @@ app.use(express.json())
 //1. POST Register a new user
 app.post("/auth/register", registerUserValidation, handleValidationErrors, registerNewUser)
 
-//2. get verify the email of the user
+//2. GET verify the email of the user
 app.get("/auth/verify", emailVerify)
 
 //3. POST Login
 app.post("/auth/login", loginUserValidation, handleValidationErrors, login)
 
+//4. POST recuperate access
+app.post("/auth/access-recovery", emailValidation, handleValidationErrors, accessRecovery)
+
+//5. get reset password
+app.get("/auth/reset-password", resetPassword)
+
+//6. POST confirm new password
+app.post("/auth/confirm", passwordValidation, handleValidationErrors, confirmPassword)
+
+// passwordValidation, handleValidationErrors,
 
 ///CRUD of Posts
 // 1. GET all posts
