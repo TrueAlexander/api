@@ -6,6 +6,9 @@ export const createNewPost = async (req, res) => {
       title: req.body.title,
       text: req.body.text,
       author: req.userId,
+      ///
+      imageUrl: req.body.imageUrl
+      ///
     })
     const newPost = await post.save()
     res.json(newPost)

@@ -14,13 +14,14 @@ export const loginUserValidation = [
 export const postValidation = [
   body('title', 'Add a title. Min length should be 5 symbols').isLength({min: 5}).isString(),
   body('text', 'Add a text. Min length should be 15 symbols').isLength({min: 15}).isString(),
+  body('imageUrl', 'Wrong URL address').optional().isString(),
 ]
 
 export const emailValidation = [
   body('email', 'Wrong email format').isEmail(),
 ]
 
-export const passwordValidation = [
+export const passwordConfirmValidation = [
   body('password1', 'Password min length should be 5 symbols').isLength({min: 5}),
   body('password2', 'Password min length should be 5 symbols').isLength({min: 5}),
   body('email', 'Wrong email format').isEmail(),
