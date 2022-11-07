@@ -1,2 +1,5 @@
 # API for e-Formaliza blog
-NodeJS / Express
+
+API for blog (posts CRUD) with user authorization, registration, email confirmation, password reset.
+
+NodeJS / Express / MongoDB
