@@ -119,11 +119,13 @@ export const login = async (req, res) => {
      //to hide password and isAdmin on client side
      const {password, isAdmin, ...userData} = user._doc
    
-    res.cookie("access_token", token, {
-      httpOnly: true,
-    }).json({
+    res
+    // .cookie("access_token", token, {
+    //   httpOnly: true,
+    // })
+    .json({
       userData,
-      // token: `Bearer ${token}`,
+      token,
       message: `Nice to see you ${user.username} again!` 
     })
    

@@ -1,14 +1,17 @@
 import PostModel from "./../models/Post.js"
+import UserModel from "./../models/User.js"
 
 export const createNewPost = async (req, res) => {
   try {
+    const id = req.userId
+    const userById = await UserModel.findById(id) 
     const post = new PostModel({
       title: req.body.title,
       text: req.body.text,
-      author: req.userId,
-      ///
+      textShort: req.body.textShort,
+      authorId: req.userId,
+      authorUsername: userById.username,
       imageUrl: req.body.imageUrl
-      ///
     })
     const newPost = await post.save()
     res.json(newPost)
