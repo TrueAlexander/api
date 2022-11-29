@@ -105,7 +105,7 @@ export const login = async (req, res) => {
     })
     ///
     if (!user.emailVerified) return res.status(401).json({
-      message: `Your email is not verified. Please go to ${req.body.email} and confirm it.`
+      message: `Seu email ainda não confirmada. Por favor vá a ${req.body.email} para confirma-lo.`
     })
     ////
     const token = jwt.sign({
@@ -126,7 +126,7 @@ export const login = async (req, res) => {
     .json({
       userData,
       token,
-      message: `Nice to see you ${user.username} again!` 
+      message: `${user.username}, bem-vindo ao nosso blog de novo!` 
     })
    
   } catch (err) {
