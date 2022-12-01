@@ -39,13 +39,13 @@ export const registerNewUser = async (req, res) => {
       const newUser = await user.save()
       ///
       const mailOptions = {
-        from: ' "Verify your email" <eformaliza@gmail.com>',
+        from: ' "Verifique seu email" <eformaliza@gmail.com>',
         to: req.body.email,
-        subject: 'eFormaliza blog. Verify your email!',
+        subject: 'eFormaliza blog. Verifique seu email!',
         html: `
-        <h2>${req.body.username}! Thanks for registering on eFormaliza blog!</h2>
-        <h4>Please verify your email to continue...</h4>
-        <a href="http://${req.headers.host}/auth/verify?email=${req.body.email}">Click to verify here!</a>`
+        <h2>${req.body.username}! Obrigado pelo registro no eFormaliza blog!</h2>
+        <h4>Por favor verifique seu email para ativar sua conta...</h4>
+        <a href="http://${req.headers.host}/auth/verify?email=${req.body.email}">Clique aqui!</a>`
       }
    
       //sending email 
@@ -55,7 +55,7 @@ export const registerNewUser = async (req, res) => {
         } else {
           console.log('Verification email is sent to your gmail account')
           res.status(201).json({
-            message: "The new user was created! Please verify your email!"
+            message: "O novo usuario foi criado! Por favor revise seu email e verifique-lo!"
           })
         }
       })
@@ -70,13 +70,13 @@ export const registerNewUser = async (req, res) => {
 
 export const emailVerify = async (req, res) => {
   try {
-    console.log(req.query.email)
     const user = await UserModel.findOneAndUpdate(
       {email: req.query.email}, {emailVerified: true}, { new:true }
     )
-    res.status(201).json({
-      message: `Dear ${user.username}, your email ${req.query.email} was successfully verified! You are welcome to our blog!`
-    })  
+    res.status(201).redirect('http://localhost:3000/thanks')
+    // .json({
+    //   message: `Dear ${user.username}, your email ${req.query.email} was successfully verified! You are welcome to our blog!`
+    // })  
   } catch (err) {
     console.log(err)
     res.status(500).json({
@@ -85,6 +85,34 @@ export const emailVerify = async (req, res) => {
   }
 }
 
+export const emailVerifyReminder = async (req, res) => {
+  try {
+
+    //send a message with link to req.body.email
+    const mailOptions = {
+      from: ' "Verifique seu email" <eformaliza@gmail.com>',
+      to: req.body.email,
+      subject: 'eFormaliza blog. Verifique seu email!',
+      html: `
+      <h2>Prezado usuario! Obrigado pelo registro no eFormaliza blog!</h2>
+      <h4>Por favor verifique seu email para ativar sua conta...</h4>
+      <a href="http://${req.headers.host}/auth/verify?email=${req.body.email}">Clique aqui!</a>`
+    }
+    transporter.sendMail(mailOptions, function(error, info) {
+      if (error) {
+        console.log(error)
+      } else {
+        console.log('Verification email is sent to your gmail account')
+      }
+    })
+ 
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({
+      message: "not verified"
+    })
+  }
+}
 
 export const login = async (req, res) => {
   try {
@@ -104,8 +132,8 @@ export const login = async (req, res) => {
       message: "Wrong password or email"
     })
     ///
-    if (!user.emailVerified) return res.status(401).json({
-      message: `Seu email ainda não confirmada. Por favor vá a ${req.body.email} para confirma-lo.`
+    if (!user.emailVerified) return res.json({
+      message: `Prezado usuario, seu email ainda não está confirmado. Por favor vá a ${req.body.email} para confirma-lo.`
     })
     ////
     const token = jwt.sign({
@@ -223,6 +251,27 @@ export const confirmPassword = async (req, res) => {
     console.log(err)
     res.status(500).json({
       message: "not accessed to server"
+    })
+  }
+}
+
+export const getMe = async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.userId)
+    if (!user) {
+      return res.status(404).json({
+        message: 'User not found',
+      })
+    }
+    //to hide password and isAdmin on client side
+    const {password, isAdmin, ...userData} = user._doc
+
+    res.json(userData)
+
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({
+      message: 'no access',
     })
   }
 }

@@ -5,7 +5,7 @@ import cors from 'cors'
 import mongoose from 'mongoose'
 import multer from 'multer'
 import { createNewPost, getAllPosts, getOnePost, updateThePost, deleteThePost } from "./controllers/PostController.js"
-import { registerNewUser, login, emailVerify, accessRecovery, resetPassword, confirmPassword } from "./controllers/UserController.js"
+import { registerNewUser, login, emailVerify, emailVerifyReminder, accessRecovery, resetPassword, confirmPassword, getMe } from "./controllers/UserController.js"
 import checkAuth from "./utils/checkAuth.js"
 import checkRights from "./utils/checkRights.js"
 import { registerUserValidation, loginUserValidation, postValidation, emailValidation, passwordConfirmValidation } from "./utils/validations.js" 
@@ -42,8 +42,11 @@ app.use("/uploads", express.static("uploads"))
 //1. POST Register a new user
 app.post("/auth/register", registerUserValidation, handleValidationErrors, registerNewUser)
 
-//2. GET verify the email of the user
+//2. GET verify the email of the user during registration
 app.get("/auth/verify", emailVerify)
+
+//2*. POST verify the email reminder
+app.post("/auth/verify/reminder", emailVerifyReminder)
 
 //3. POST Login
 app.post("/auth/login", loginUserValidation, handleValidationErrors, login)
@@ -56,6 +59,9 @@ app.get("/auth/reset-password", resetPassword)
 
 //6. POST confirm new password
 app.post("/auth/confirm", passwordConfirmValidation, handleValidationErrors, confirmPassword)
+
+//7. GET check is authorized for every request from front
+app.get('/auth/me', checkAuth, getMe)
 
 // passwordValidation, handleValidationErrors,
 
