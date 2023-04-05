@@ -53,7 +53,7 @@ export const registerNewUser = async (req, res) => {
         if (error) {
           console.log(error)
         } else {
-          console.log('Verification email is sent to your gmail account')
+          console.log('Verification email is sent to your email account')
           res.status(201).json({
             message: "O novo usuario foi criado! Por favor revise seu email e verifique-lo!"
           })
@@ -102,7 +102,7 @@ export const emailVerifyReminder = async (req, res) => {
       if (error) {
         console.log(error)
       } else {
-        console.log('Verification email is sent to your gmail account')
+        console.log('Verification email is sent to your email account')
       }
     })
  
@@ -165,6 +165,9 @@ export const login = async (req, res) => {
   }
 }
 
+
+
+
 export const accessRecovery = async (req, res) => {
   try {
     const user = await UserModel.findOne({
@@ -173,25 +176,26 @@ export const accessRecovery = async (req, res) => {
     if (user) {
       ///send an email with instructions
       const mailOptions = {
-        from: ' "Access recovery" <eformaliza@gmail.com>',
+        from: ' "Recuperação de acesso a eFormaliza blog" <eformaliza@gmail.com>',
         to: req.body.email,
-        subject: 'eFormaliza blog. Access recovery',
+        subject: 'eFormaliza blog. Recuperação de acesso',
         html: `
-        <h4>${user.username}! To access recover to eFormaliza blog please click on the link below...</h4>
-        <a href="http://${req.headers.host}/auth/reset-password?email=${req.body.email}&user=${user._id.toString()}">Click to reset the password!</a>`
+        <h4>${user.username}! Para recuperar o acesso a eFormaliza blog por favor clique abaixo...</h4>
+        <a href="http://${req.headers.host}/auth/reset-password?email=${req.body.email}&user=${user._id.toString()}">Clique aqui!</a>`
       }
       transporter.sendMail(mailOptions, function(error, info) {
         if (error) {
           console.log(error)
         } else {
           res.status(200).json({
-            message: `Dear ${user.username} to recover your access to eFormaliza blog please enter your email address!`
+            message: `Prezado ${user.username}! Para recuperar o acesso ao seu perfil a eFormaliza blog por favor entre ao ${req.body.email}!`
           })
+          
         }
       })
       ////
     } else res.status(404).json({
-      message: `The user with ${req.body.email} is not registered yet. Please create your profile on our platform!`
+      message: `O usuario ${req.body.email} não foi encontrado. Por favor cadastre-se a nossa plataforma!`
     })
 
   } catch (err) {
@@ -202,6 +206,9 @@ export const accessRecovery = async (req, res) => {
   }
 }
 
+
+
+
 export const resetPassword = async (req, res) => {
   try {
     const user = await UserModel.findById(req.query.user)
@@ -210,6 +217,9 @@ export const resetPassword = async (req, res) => {
         message: "The user not found"
       })
     } else {
+
+
+      ///redirect localhost:3000/new-password
       res.status(200).json({
         message: "Please digit the new password (Min length should be 5 symbols) and click Confirm new password."
       })
@@ -254,6 +264,12 @@ export const confirmPassword = async (req, res) => {
     })
   }
 }
+
+
+
+
+
+
 
 export const getMe = async (req, res) => {
   try {
