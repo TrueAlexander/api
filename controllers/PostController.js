@@ -8,7 +8,7 @@ export const createNewPost = async (req, res) => {
     const post = new PostModel({
       title: req.body.title,
       text: req.body.text,
-      textShort: req.body.textShort,
+      // textShort: req.body.textShort,
       authorId: req.userId,
       authorUsername: userById.username,
       imageUrl: req.body.imageUrl

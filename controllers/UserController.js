@@ -165,9 +165,6 @@ export const login = async (req, res) => {
   }
 }
 
-
-
-
 export const accessRecovery = async (req, res) => {
   try {
     const user = await UserModel.findOne({
@@ -205,9 +202,6 @@ export const accessRecovery = async (req, res) => {
     })
   }
 }
-
-
-
 
 export const resetPassword = async (req, res) => {
   try {

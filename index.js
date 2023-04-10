@@ -84,7 +84,7 @@ app.delete("/posts/:id", checkAuth, checkRights, deleteThePost)
 // 6 upload images
 app.post("/upload", checkAuth, upload.single('image'), (req, res) => {
   res.status(200).json({
-    // url: `/uploads/${req.file.originalname}`,
+    url: `/uploads/${req.file.filename}`,
     message: "The image was successfully uploaded!"
   })
 })
